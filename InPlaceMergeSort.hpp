@@ -1,0 +1,29 @@
+#ifndef INPLACEMERGESORT_HPP
+#define INPLACEMERGESORT_HPP
+#include <vector>
+#include <algorithm>
+#include <chrono>
+
+
+template <typename loser>
+void recursiveInPlaceMergeSort(loser begin, loser end);
+int inplacemergeSort(std::vector<int>& nums, int& duration) {
+    auto start = std::chrono::high_resolution_clock::now();
+    recursiveInPlaceMergeSort(nums.begin(), nums.end());
+    auto end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    return nums[nums.size() / 2];
+}
+
+
+template <typename loser>
+void recursiveInPlaceMergeSort(loser begin, loser end) {
+    if (end - begin > 1) {
+        loser middle = begin + (end - begin) / 2;
+        recursiveInPlaceMergeSort(begin, middle);
+        recursiveInPlaceMergeSort(middle, end);
+        std::inplace_merge(begin, middle, end);
+    }
+}
+
+#endif  // INPLACEMERGESORT_HPP
