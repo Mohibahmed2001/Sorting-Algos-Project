@@ -20,6 +20,4 @@ int mergeSort(std::vector<int>& nums, int& duration) {
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     return nums[nums.size() / 2];
 }
-
-// Explicit instantiation for the template function with the required types
 template void recursiveMergeSort(std::vector<int>::iterator begin, std::vector<int>::iterator end);
