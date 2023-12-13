@@ -19,7 +19,12 @@ int inplacemergeSort(std::vector<int>& nums, int& duration) {
     recursiveInPlaceMergeSort(nums.begin(), nums.end());
     auto end = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    return nums[nums.size() / 2];
+    if(nums.size()%2==0){
+        return nums[(nums.size() / 2)-1];
+    }
+    else{
+        return nums[(nums.size()/2)];
+    }
 }
 template void recursiveInPlaceMergeSort(std::vector<int>::iterator begin, std::vector<int>::iterator end);
 #endif
