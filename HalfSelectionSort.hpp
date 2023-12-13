@@ -26,7 +26,7 @@ int halfSelectionSort(std::vector<int>& nums, int& duration) {
 
     // Need to determine if even or odd CRUCIAL STEP
     if (nums.size() % 2 == 0) {
-        return (nums[middleIndex - 1] + nums[middleIndex]) / 2;
+        return (nums[middleIndex - 1]);
     } else {
         // ODD
         return nums[middleIndex];
