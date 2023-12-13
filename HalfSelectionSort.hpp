@@ -6,25 +6,23 @@ using namespace std;
 #include <chrono>
 
 int halfSelectionSort(std::vector<int>& nums, int& duration) {
-    auto start = std::chrono::steady_clock::now();
-    if (nums.size() >= 50000) {
-        std::cout << "Method too big, selection sort is not recommended." << std::endl;
-        duration = -1;
-        return 0;
+   auto start = std::chrono::high_resolution_clock::now();
+  if (nums.size() > 50000) {
+    std::cout << "List size exceeds 50,000. This function cannot handle large lists." << std::endl;
+    return -1;
+  }
+  for (int i = 0; i < nums.size() / 2; ++i) {
+    int min_index = i;
+    for (int j = i + 1; j < nums.size(); ++j) {
+      if (nums[j] < nums[min_index]) {
+        min_index = j;
+      }
     }
-    int n = nums.size();
-    int median = nums.size() / 2;
-    for (int i = 0; i <= median; i++) {
-        int min_index = i;
-        for (int j = i + 1; j < n; j++) {
-            if (nums[j] <= nums[min_index]) {
-                min_index = j;
-            }
-        }
-        std::swap(nums[i], nums[min_index]);
-    }
-    auto end = std::chrono::steady_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::swap(nums[i], nums[min_index]);
+  }
+
+  auto end = std::chrono::high_resolution_clock::now();
+  duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     if(nums.size()%2==0){
         return nums[(nums.size() / 2)-1];
     }
