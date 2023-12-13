@@ -12,7 +12,6 @@ int standardSort(std::vector<int>& nums, int& duration) {
     auto end = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-    int middle = nums.size() / 2;
-    return nums[middle-1];
+    return nums[nums.size() / 2];
 }
 #endif
