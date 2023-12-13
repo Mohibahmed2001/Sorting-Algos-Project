@@ -21,11 +21,11 @@ if(nums.size()%2!=0){
     }
     std::swap(nums[i], nums[min_index]);
   }
-   auto end = std::chrono::high_resolution_clock::now();
+auto end = std::chrono::high_resolution_clock::now();
   duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
   return nums[(nums.size()/2)];
 }else{
-    for (int i = 0; i < (nums.size() / 2)-1; ++i) {
+    for (int i = 0; i < ((nums.size() / 2)-1); ++i) {
     int min_index = i;
     for (int j = i + 1; j < nums.size(); ++j) {
       if (nums[j] < nums[min_index]) {
@@ -34,9 +34,10 @@ if(nums.size()%2!=0){
     }
     std::swap(nums[i], nums[min_index]);
   }
-   auto end = std::chrono::high_resolution_clock::now();
+    auto end = std::chrono::high_resolution_clock::now();
   duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
   return nums[(nums.size()/2)-1];
+}
 }
  
 
