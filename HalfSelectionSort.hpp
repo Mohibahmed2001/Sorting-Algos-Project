@@ -25,7 +25,7 @@ int halfSelectionSort(std::vector<int>& nums, int& duration) {
     }
     auto end = std::chrono::steady_clock::now();
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    return nums[median];
+    return nums[median-1];
 }
 
 #endif
