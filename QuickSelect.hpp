@@ -8,6 +8,9 @@ using namespace std;
 
 std::vector<int>::iterator medianOfThree(std::vector<int>& nums, std::vector<int>::iterator low, std::vector<int>::iterator high) {
     std::vector<int>::iterator middle = low + (high - low) / 2;
+    if (nums.size() % 2 == 0) {
+    --middle; 
+    }
     if (*low > *middle) {
         std::iter_swap(low, middle);
     }
