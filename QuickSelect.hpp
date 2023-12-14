@@ -1,68 +1,67 @@
-#ifndef QUICK_SELECT_HPP
-#define QUICK_SELECT_HPP
-#include <iostream>
+#ifndef QUICKSELECT_HPP
+#define QUICKSELECT_HPP
+
 #include <vector>
 #include <chrono>
-#include <random>
+#include <algorithm>
+
+std::vector<int>::iterator medianOf3(std::vector<int>& nums, std::vector<int>::iterator low, std::vector<int>::iterator high) {
+    std::vector<int>::iterator mid = low + (high - low) / 2;
+    if (*low > *mid)
+        std::swap(*low, *mid);
+    if (*low > *high)
+        std::swap(*low, *high);
+    if (*mid > *high)
+        std::swap(*mid, *high);
+
+    return mid;
+}
 std::vector<int>::iterator hoarePartition(std::vector<int>& nums, std::vector<int>::iterator low, std::vector<int>::iterator high) {
-    // Pivot 3 method
-    auto pivotIt = low + (high - low) / 2;
-    std::iter_swap(pivotIt, high);
-    int pivot = *high;
+    auto pivotIt = medianOf3(nums, low, high);
+    int pivot = *pivotIt;
+    std::swap(*pivotIt, *(high - 1));
+
     auto i = low - 1;
-    for (auto j = low; j < high; ++j) {
-        if (*j <= pivot) {
+    auto j = high - 1;
+
+    while (true) {
+        do {
             ++i;
-            std::iter_swap(i, j);
-        }
+        } while (*i < pivot);
+
+        do {
+            --j;
+        } while (*j > pivot);
+
+        if (i >= j)
+            break;
+
+        std::swap(*i, *j);
     }
-    std::iter_swap(i + 1, high);
-    return i + 1;
+
+    std::swap(*i, *(high - 1)); 
+    return i;
 }
 
-void insertionSort(std::vector<int>& nums, std::vector<int>::iterator low, std::vector<int>::iterator high) {
-    for (auto i = low + 1; i <= high; ++i) {
-        int key = *i;
-        auto j = i - 1;
-
-        while (j >= low && *j > key) {
-            *(j + 1) = *j;
-            --j;
-        }
-
-        *(j + 1) = key;
+void quickSelectRecursive(std::vector<int>& nums, std::vector<int>::iterator low, std::vector<int>::iterator high) {
+    if (high - low > 10) {
+        auto pivotIt = hoarePartition(nums, low, high);
+        quickSelectRecursive(nums, low, pivotIt);
+        quickSelectRecursive(nums, pivotIt + 1, high);
+    } else {
+        std::sort(low, high);
     }
 }
 
 int quickSelect(std::vector<int>& nums, int& duration) {
-    auto start_time = std::chrono::high_resolution_clock::now();
-    if (nums.size() <= 10) {
-        insertionSort(nums, nums.begin(), nums.end() - 1);
-    } else {
-        std::default_random_engine generator;
-        std::uniform_int_distribution<int> distribution(0, nums.size() - 1);
-        auto low = nums.begin();
-        auto high = nums.end() - 1;
-        auto targetIndex = nums.size() / 2;
-        while (low <= high) {
-            auto pivot = hoarePartition(nums, low, high);
-            if (pivot == nums.begin() + targetIndex) {
-                break;
-            } else if (pivot < nums.begin() + targetIndex) {
-                low = pivot + 1;
-            } else {
-                high = pivot - 1;
-            }
-        }
-    }
-    auto end_time = std::chrono::high_resolution_clock::now();
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
-    if(nums.size()%2==0){
-        return nums[(nums.size() / 2)-1];
-    }
-    else{
-        return nums[(nums.size()/2)];
-    }
+    auto start = std::chrono::high_resolution_clock::now();
+
+    quickSelectRecursive(nums, nums.begin(), nums.end());
+
+    auto end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+    return nums[nums.size() / 2];
 }
 
 #endif
