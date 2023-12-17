@@ -1,65 +1,71 @@
 #ifndef QUICKSELECT_HPP
 #define QUICKSELECT_HPP
-#include <iostream>
+
 #include <vector>
+#include <chrono>
 #include <algorithm>
+int quickSelect ( std::vector<int>& nums, int& duration )
+std::vector<int>::iterator hoarePartition ( std::vector<int>& nums, std::vector<int>::iterator low, std::vector<int>::iterator high )
+   // hoarePartition precondition: low points to the first element in the subarray to be partitioned. The pivot is the last element in the subarray to be partitioned, and is pointed to by high.
+   // hoarePartition returns an iterator to the pivot after it's placed.
+//Note that this implementation of hoarePartition makes it usable with different pivot selection methods, but also requires that you select your pivot and swap it into the last position prior to calling hoarePartition.
+std::vector<int>::iterator medianOf3(std::vector<int>& nums, std::vector<int>::iterator low, std::vector<int>::iterator high) {
+    std::vector<int>::iterator mid = low + (high - low) / 2;
+    if (*low > *mid)
+        std::swap(*low, *mid);
+    if (*low > *high)
+        std::swap(*low, *high);
+    if (*mid > *high)
+        std::swap(*mid, *high);
 
-using namespace std;
-
-std::vector<int>::iterator medianOfThree(std::vector<int>& nums, std::vector<int>::iterator low, std::vector<int>::iterator high) {
-    std::vector<int>::iterator middle = low + (high - low) / 2;
-    if (nums.size() % 2 == 0) {
-    --middle; 
-    }
-    if (*low > *middle) {
-        std::iter_swap(low, middle);
-    }
-    if (*low > *high) {
-        std::iter_swap(low, high);
-    }
-    if (*middle > *high) {
-        std::iter_swap(middle, high);
-    }
-
-    return middle;
+    return mid;
 }
-
 std::vector<int>::iterator hoarePartition(std::vector<int>& nums, std::vector<int>::iterator low, std::vector<int>::iterator high) {
-    std::vector<int>::iterator pivot = medianOfThree(nums, low, high);
-    std::iter_swap(pivot, high);
-    pivot = high;
+    auto pivotIt = medianOf3(nums, low, high);
+    int pivot = *pivotIt;
+    std::swap(*pivotIt, *(high - 1));
+
     auto i = low - 1;
-    for (auto j = low; j < high; ++j) {
-        if (*j < *pivot) {
+    auto j = high - 1;
+
+    while (true) {
+        do {
             ++i;
-            std::iter_swap(i, j);
-        }
+        } while (*i < pivot);
+
+        do {
+            --j;
+        } while (*j > pivot);
+
+        if (i >= j)
+            break;
+
+        std::swap(*i, *j);
     }
-    std::iter_swap(i + 1, high);
-    return i + 1;
+
+    std::swap(*i, *(high - 1)); 
+    return i;
 }
 
-int quickSelectRecursive(std::vector<int>& nums, std::vector<int>::iterator low, std::vector<int>::iterator high, int& duration) {
-    if (high - low + 1 > 10) {
-        auto pivot = hoarePartition(nums, low, high);
-        if (pivot > low) {
-            quickSelectRecursive(nums, low, pivot - 1, duration);
-        }
-        if (pivot < high) {
-            quickSelectRecursive(nums, pivot + 1, high, duration);
-        }
+void quickSelectRecursive(std::vector<int>& nums, std::vector<int>::iterator low, std::vector<int>::iterator high) {
+    if (high - low > 10) {
+        auto pivotIt = hoarePartition(nums, low, high);
+        quickSelectRecursive(nums, low, pivotIt);
+        quickSelectRecursive(nums, pivotIt + 1, high);
     } else {
-        std::sort(low, high + 1);
+        std::sort(low, high);
     }
-    auto medianIndex = low + (high - low) / 2;
-    return *medianIndex;
 }
 
 int quickSelect(std::vector<int>& nums, int& duration) {
-    auto low = nums.begin();
-    auto high = nums.end() - 1;
-    //CORRECT RETURN
-    return quickSelectRecursive(nums, low, high, duration);
+    auto start = std::chrono::high_resolution_clock::now();
+
+    quickSelectRecursive(nums, nums.begin(), nums.end());
+
+    auto end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+    return nums[nums.size() / 2];
 }
 
 #endif
